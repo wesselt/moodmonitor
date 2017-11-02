@@ -17,7 +17,7 @@
   become: yes
   file:
     path: "{{ project_path }}"
-    owner: deploy
+    owner: mood
     group: apache
     recurse: yes
 
