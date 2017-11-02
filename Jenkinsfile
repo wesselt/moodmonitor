@@ -19,8 +19,8 @@ node ('master') {
     stage 'Confirm deployment on prod'
     input message:'Deploy on production?'
 
-
-        [$class: 'UsernamePasswordMultiBinding', credentialsId: 'svc_jenkins_user',usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']
+        withCredentials([
+        [$class: 'UsernamePasswordMultiBinding', credentialsId: 'svc_jenkins_user',usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']])
         {
             sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook mood-deploy.yml -i inventory-test -e \"git_version=${env.BRANCH_NAME} ansible_ssh_user=${env.USERNAME} ansible_ssh_pass=${env.PASSWORD} ansible_become_pass=${env.PASSWORD}\" -v"
         }
