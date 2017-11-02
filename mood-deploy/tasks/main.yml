@@ -32,6 +32,13 @@
     requirements: "{{ project_path }}/requirements"
     virtualenv: "{{ virtualenv_path }}"
 
+- name: Correct perms
+  become: yes
+  become_user: root
+  file:
+    path: "{{ project_path }}/manage.py"
+    mode: 0775
+  
 - name: Run Django database makemigrations
   django_manage:
     command: "makemigrations"
