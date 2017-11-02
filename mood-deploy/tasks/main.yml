@@ -1,0 +1,70 @@
+---
+- name: Check django path
+  stat:
+     path: "{{ project_path }}"
+  register: django_is_there
+
+- name: Pull infra portal
+  git:
+    repo: 'https://gitlabcd.itv.local/hackathon/moodmonitor.git'
+    dest: "{{ project_path }}"
+    update: yes
+    force: yes
+    version: "{{ git_version }}"
+
+- name: Set perms
+  become_user: root
+  become: yes
+  file:
+    path: "{{ project_path }}"
+    owner: deploy
+    group: apache
+    recurse: yes
+
+- name: Install infra-portal requirements
+  pip:
+    name: "setuptools"
+    version: "{{ setup_tools_version }}"
+    virtualenv: "{{ virtualenv_path }}"
+
+- name: Install pip requirements
+  pip:
+    requirements: "{{ project_path }}/requirements"
+    virtualenv: "{{ virtualenv_path }}"
+
+- name: Run Django database makemigrations
+  django_manage:
+    command: "makemigrations"
+    app_path: "{{ project_path }}"
+    virtualenv: "{{ virtualenv_path }}"
+    settings: "{{ django_settings_file }}"
+    pythonpath: "/bin/python"
+  when: django_is_there
+
+- name: Run Django database migrate
+  django_manage:
+    command: "migrate"
+    app_path: "{{ project_path }}"
+    virtualenv: "{{ virtualenv_path }}"
+    settings: "{{ django_settings_file }}"
+  when: django_is_there
+
+- name: get files
+  become: yes
+  become_user: root
+  shell: ls {{ project_path }}/*.sqlite3
+  register: path_files
+
+- name: Correct perms
+  become: yes
+  become_user: root
+  file:
+    path: "{{ item }}"
+    mode: 0660
+  with_items: "{{ path_files.stdout_lines }}"
+
+- name: restart httpd
+  become_user: root
+  become: yes
+  service: name=httpd state=restarted
+  when: django_is_there

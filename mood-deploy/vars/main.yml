@@ -1,0 +1,6 @@
+---
+# vars file for django-deploy
+project_path : "/home/mood/Mood"
+virtualenv_path : "/home/mood/Mood"
+django_settings_file : "project.settings"
+setup_tools_version: "36.6.0"
