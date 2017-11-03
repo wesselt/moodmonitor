@@ -9,3 +9,8 @@ from django.shortcuts import render
 def home(request):
     context = {'title': 'Welkom on our Mood Monitor'}
     return render(request, 'base.html', context)
+
+
+def login(request):
+    context = {'title': 'Logon our Mood Monitor'}
+    return render(request, 'login.html', context)
