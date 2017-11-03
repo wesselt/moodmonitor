@@ -48,6 +48,15 @@
     pythonpath: "/bin/python"
   when: django_is_there
 
+- name: Run Django database makemigrations
+  django_manage:
+    command: "makemigrations mm_app"
+    app_path: "{{ project_path }}"
+    virtualenv: "{{ virtualenv_path }}"
+    settings: "{{ django_settings_file }}"
+    pythonpath: "/bin/python"
+  when: django_is_there
+
 - name: Run Django database migrate
   django_manage:
     command: "migrate"
