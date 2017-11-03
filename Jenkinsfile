@@ -16,8 +16,7 @@ node ('master') {
             sh "${scannerHome}/bin/sonar-scanner -Dsonar.exclusions=static/** -Dsonar.projectKey=Mood-monitor -Dsonar.sources=."
         }
     }
-    stage 'Confirm deployment on prod'
-    input message:'Deploy on production?'
+
 
         withCredentials([
         [$class: 'UsernamePasswordMultiBinding', credentialsId: 'svc_jenkins_user',usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']])
